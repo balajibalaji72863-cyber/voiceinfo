@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice-First Digital Services Platform</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Mukta:wght@300;500;700&family=Playfair+Display:wght@600&display=swap");
+
+      :root {
+        --bg: #14073b;
+        --bg-accent: #2b1286;
+        --ink: #f6f2ff;
+        --muted: #d2c9ef;
+        --primary: #27d4ff;
+        --primary-dark: #17b8ef;
+        --accent: #ff56dc;
+        --card: rgba(255, 255, 255, 0.08);
+        --shadow: 0 14px 36px rgba(5, 3, 28, 0.45);
+        --radius: 18px;
+        --border: rgba(255, 255, 255, 0.22);
+        --panel-gap: 24px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Mukta", "Noto Sans", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 8%, rgba(109, 222, 255, 0.5) 0%, transparent 34%),
+          radial-gradient(circle at 88% 12%, rgba(255, 98, 227, 0.36) 0%, transparent 36%),
+          linear-gradient(120deg, #1f0a68 0%, #4f1cc7 46%, #2f87f8 100%);
+        min-height: 100vh;
+        padding: 14px;
+      }
+
+      header {
+        padding: 28px 20px 12px;
+        text-align: center;
+      }
+
+      h1 {
+        font-family: "Playfair Display", "Mukta", serif;
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+        margin: 0 0 6px;
+      }
+
+      p.lead {
+        margin: 0 auto;
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+
+      .app-shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.7fr);
+        gap: 20px;
+        max-width: 1380px;
+        margin: 0 auto 28px;
+      }
+
+      main {
+        display: grid;
+        gap: var(--panel-gap);
+        padding: 20px;
+        margin: 0;
+      }
+
+      .panel {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 22px;
+        border: 1px solid var(--border);
+        backdrop-filter: blur(16px) saturate(140%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(120deg, rgba(255, 255, 255, 0.22), transparent 36%),
+          radial-gradient(circle at 90% 5%, rgba(255, 255, 255, 0.3), transparent 30%);
+        pointer-events: none;
+      }
+
+      .side-rail {
+        align-self: start;
+        display: grid;
+        gap: 14px;
+        grid-auto-rows: min-content;
+        min-height: 620px;
+      }
+
+      .rail-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .rail-kicker {
+        margin: 0;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #8ef6ff;
+      }
+
+      .rail-title {
+        margin: 2px 0 0;
+        font-size: 1.4rem;
+        line-height: 1.2;
+      }
+
+      .pill-badge {
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: rgba(39, 212, 255, 0.2);
+        border: 1px solid rgba(142, 246, 255, 0.5);
+        color: #b9f7ff;
+        font-weight: 700;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .rail-card {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        background: rgba(7, 15, 45, 0.42);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      }
+
+      .rail-card h4 {
+        margin: 0 0 6px;
+        font-size: 1rem;
+      }
+
+      .rail-meta {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .progress-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .bar {
+        height: 9px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.15);
+        overflow: hidden;
+      }
+
+      .bar > span {
+        display: block;
+        height: 100%;
+        width: 64%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #33d9ff 0%, #a05fff 100%);
+      }
+
+      .dot-list {
+        display: grid;
+        gap: 8px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .dot-list li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+
+      .dot.c1 { background: #29dcff; }
+      .dot.c2 { background: #b056ff; }
+      .dot.c3 { background: #2ef2a8; }
+      }
+
+      .voice-panel {
+        display: grid;
+        gap: 18px;
+      }
+
+      .controls {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr;
+      }
+
+      button,
+      select {
+        font: inherit;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.09);
+        color: var(--ink);
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+      }
+
+      #languageSelect {
+        background: rgba(116, 150, 255, 0.42);
+        color: #ffffff;
+        border-color: rgba(180, 205, 255, 0.8);
+        font-weight: 700;
+      }
+
+      #languageSelect option {
+        background: #ffffff;
+        color: #162447;
+      }
+
+      button.primary {
+        background: linear-gradient(120deg, #21d4fd 0%, #4ab8ff 45%, #8d5bff 100%);
+        color: #15053a;
+        border-color: transparent;
+      }
+
+      button.primary:hover,
+      button.primary:focus-visible {
+        background: linear-gradient(120deg, #3de0ff 0%, #69c5ff 45%, #a67bff 100%);
+      }
+
+      button.secondary {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      button:focus-visible,
+      select:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .mic {
+        display: grid;
+        place-items: center;
+        background: linear-gradient(120deg, #ff4edb 0%, #ff7fb2 35%, #57b6ff 100%);
+        color: #19073f;
+        font-weight: 700;
+        font-size: 1rem;
+        border: none;
+        border-radius: 999px;
+        height: 52px;
+      }
+
+      .mic.listening {
+        animation: pulse 1.4s infinite;
+      }
+
+      @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(255, 86, 220, 0.58); }
+        70% { box-shadow: 0 0 0 22px rgba(255, 86, 220, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 86, 220, 0); }
+      }
+
+      .status {
+        font-weight: 600;
+        color: #8cecff;
+      }
+
+      .transcript,
+      .response {
+        background: rgba(255, 255, 255, 0.09);
+        border-radius: 14px;
+        padding: 12px;
+        min-height: 70px;
+        border: 1px solid var(--border);
+      }
+
+      .grid-two {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        align-items: stretch;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        display: grid;
+        gap: 12px;
+      }
+
+      .card h3 {
+        margin: 0 0 6px;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 12px;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.08);
+        align-items: start;
+      }
+
+      .item label {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        font-weight: 600;
+      }
+
+      .item input[type="checkbox"] {
+        display: none;
+      }
+
+      .item a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        justify-self: start;
+        align-self: start;
+      }
+
+      .item a:hover,
+      .item a:focus-visible {
+        text-decoration: underline;
+      }
+
+      .category {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+      }
+
+      .gov-tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 0;
+      }
+
+      .gov-tabs-wrap {
+        margin-top: -8px;
+        margin-bottom: -8px;
+      }
+
+      .gov-tab-btn {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--ink);
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-weight: 700;
+      }
+
+      .gov-tab-btn.active {
+        background: linear-gradient(120deg, #2fd7ff 0%, #33b6ff 44%, #7b67ff 100%);
+        color: #17063e;
+        border-color: transparent;
+      }
+
+      .category-tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 12px 0 16px;
+      }
+
+      .tab-btn {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--ink);
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+
+      .tab-btn.active {
+        background: linear-gradient(120deg, #39d8ff 0%, #47bcff 50%, #8c71ff 100%);
+        color: #17063e;
+        border-color: transparent;
+      }
+
+      .tabbed-grid .card {
+        display: none;
+      }
+
+      .tabbed-grid .card.active {
+        display: grid;
+      }
+
+      .bilingual {
+        display: inline;
+      }
+
+      .hint {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .debug {
+        background: rgba(17, 12, 47, 0.65);
+        border: 1px dashed rgba(140, 236, 255, 0.5);
+        border-radius: 12px;
+        padding: 10px;
+        font-size: 0.92rem;
+        color: #bdeeff;
+      }
+
+      .mini-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        align-items: stretch;
+      }
+
+      .mini-card {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        font-size: 0.98rem;
+        cursor: pointer;
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+        display: grid;
+        gap: 6px;
+      }
+
+      .mini-card:hover,
+      .mini-card:focus-visible {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(5, 3, 28, 0.42);
+      }
+
+      .mini-card h4 {
+        margin: 0 0 6px;
+        font-size: 1rem;
+      }
+
+      @media (max-width: 1080px) {
+        .app-shell {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        .side-rail {
+          min-height: 0;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .item {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .item a {
+          white-space: normal;
+          justify-self: start;
+        }
+      }
+
+      footer {
+        text-align: center;
+        padding: 10px 20px 30px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Voice-First Digital Services Platform</h1>
+      <p class="lead">
+        A simple, accessible demo for rural communities, elders, and people who cannot read or type.
+        Speak in Tamil or English to access digital services.
+      </p>
+    </header>
+
+    <div class="app-shell">
+      <main>
+      <section class="panel voice-panel" aria-labelledby="voice-title">
+        <h2 id="voice-title" class="bilingual" data-en="Voice Assistant" data-ta="குரல் உதவியாளர்">Voice Assistant</h2>
+        <div class="controls">
+          <label>
+            <span class="bilingual" data-en="Language" data-ta="மொழி">Language</span>
+            <select id="languageSelect" aria-label="Language selection">
+              <option value="ta-IN">தமிழ்</option>
+              <option value="en-IN">English</option>
+            </select>
+          </label>
+          <div class="mini-grid">
+            <button
+              id="startBtn"
+              class="primary bilingual"
+              data-en="Start Listening"
+              data-ta="கேட்க தொடங்கு"
+            >
+              Start Listening
+            </button>
+            <button
+              id="stopBtn"
+              class="secondary bilingual"
+              data-en="Stop"
+              data-ta="நிறுத்து"
+            >
+              Stop
+            </button>
+            <button
+              id="speakBtn"
+              class="bilingual"
+              data-en="Repeat Message"
+              data-ta="செய்தியை மீண்டும் சொல்"
+            >
+              Repeat Message
+            </button>
+            <button id="micBtn" class="mic" aria-pressed="false">
+              <span class="bilingual" data-en="Mic on" data-ta="மைக் ஆன்">Mic on</span>
+            </button>
+          </div>
+        </div>
+        <p class="hint bilingual" data-en="Press “Start Listening” and ask for help, for example: “Aadhaar”, “ration card”, “Voter ID”, or “TN e-Sevai”." data-ta="“Start Listening” அழுத்தி உதவி கேளுங்கள். உதாரணம்: “ஆதார்”, “ரேஷன் கார்டு”, “வாக்காளர் அட்டை”, அல்லது “TN e-சேவை”."
+        >Press “Start Listening” and ask for help, for example: “Aadhaar”, “ration card”, “Voter ID”, or “TN e-Sevai”.</p>
+        <div class="status bilingual" id="statusText" data-en="Ready to listen." data-ta="கேட்க தயாராக உள்ளது.">Ready to listen.</div>
+        <div class="grid-two">
+          <div>
+            <h3 class="bilingual" data-en="What you said" data-ta="நீங்கள் சொன்னது">What you said</h3>
+            <div id="transcript" class="transcript" aria-live="polite"></div>
+          </div>
+          <div>
+            <h3 class="bilingual" data-en="Assistant response" data-ta="உதவியாளர் பதில்">Assistant response</h3>
+            <div id="response" class="response" aria-live="polite"></div>
+          </div>
+        </div>
+        <div id="debugBox" class="debug" aria-live="polite">
+          Debug: No match yet.
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="quick-title">
+        <h2 id="quick-title" class="bilingual" data-en="Quick Services (Tap to open)" data-ta="விரைவு சேவைகள் (தட்ட திறக்கவும்)">Quick Services (Tap to open)</h2>
+        <div class="mini-grid">
+          <div class="mini-card" tabindex="0" data-url="https://uidai.gov.in/">
+            <h4 class="bilingual" data-en="Identity Services" data-ta="அடையாள சேவைகள்">Identity Services</h4>
+            <p class="bilingual" data-en="Aadhaar, PAN, Voter ID" data-ta="ஆதார், பேன், வாக்காளர் அட்டை">Aadhaar, PAN, Voter ID</p>
+          </div>
+          <div class="mini-card" tabindex="0" data-url="https://www.tnesevai.tn.gov.in/">
+            <h4 class="bilingual" data-en="State e-Services (TN)" data-ta="மாநில e-சேவைகள் (TN)">State e-Services (TN)</h4>
+            <p class="bilingual" data-en="TN e-Sevai, certificates, police, utilities" data-ta="TN e-சேவை, சான்றுகள், காவல், பயன்பாடுகள்">TN e-Sevai, certificates, police, utilities</p>
+          </div>
+          <div class="mini-card" tabindex="0" data-url="https://tnpds.gov.in/">
+            <h4 class="bilingual" data-en="Welfare & Grievance" data-ta="நலன் & புகார்">Welfare & Grievance</h4>
+            <p class="bilingual" data-en="PDS ration, pensions, CPGRAMS" data-ta="PDS ரேஷன், பென்ஷன், CPGRAMS">PDS ration, pensions, CPGRAMS</p>
+          </div>
+          <div class="mini-card" tabindex="0" data-url="https://www.india.gov.in/">
+            <h4 class="bilingual" data-en="Citizen Portals" data-ta="குடிமக்கள் தளங்கள்">Citizen Portals</h4>
+            <p class="bilingual" data-en="india.gov.in, services.india.gov.in, UMANG" data-ta="india.gov.in, services.india.gov.in, UMANG">india.gov.in, services.india.gov.in, UMANG</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="gov-tabs-wrap" aria-label="Government navigation">
+        <div class="gov-tabs" role="tablist" aria-label="Government level tabs">
+          <button
+            type="button"
+            class="gov-tab-btn bilingual"
+            id="gov-tab-central"
+            role="tab"
+            aria-controls="gov-panel-central"
+            aria-selected="true"
+            tabindex="0"
+            data-en="Central Government"
+            data-ta="மத்திய அரசு"
+          >
+            Central Government
+          </button>
+          <button
+            type="button"
+            class="gov-tab-btn bilingual"
+            id="gov-tab-tn"
+            role="tab"
+            aria-controls="gov-panel-tn"
+            aria-selected="false"
+            tabindex="-1"
+            data-en="Tamil Nadu State Government"
+            data-ta="தமிழ்நாடு மாநில அரசு"
+          >
+            Tamil Nadu State Government
+          </button>
+        </div>
+      </div>
+
+      <section class="panel" id="gov-panel-central" data-gov-panel="central" role="tabpanel" aria-labelledby="gov-tab-central">
+        <h2 id="central-title" class="bilingual" data-en="Central Government (All India)" data-ta="மத்திய அரசு (இந்தியா முழுவதும்)">Central Government (All India)</h2>
+        <div class="grid-two">
+          <div class="card">
+            <h3 class="category bilingual" data-en="Identity & Core Documents" data-ta="அடையாள & அடிப்படை ஆவணங்கள்">Identity & Core Documents</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Aadhaar (Apply / Update / Download)" data-ta="ஆதார் (விண்ணப்பம் / புதுப்பிப்பு / பதிவிறக்கம்)">
+                  <input type="checkbox" /> Aadhaar (Apply / Update / Download)
+                </label>
+                <a href="https://uidai.gov.in/" target="_blank" rel="noopener">uidai.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Aadhaar Status / Services" data-ta="ஆதார் நிலை / சேவைகள்">
+                  <input type="checkbox" /> Aadhaar Status / Services
+                </label>
+                <a href="https://serviceonline.gov.in/uidai/" target="_blank" rel="noopener">serviceonline.gov.in/uidai</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="PAN Card (Apply / Correction / Download)" data-ta="பேன் கார்டு (விண்ணப்பம் / திருத்தம் / பதிவிறக்கம்)">
+                  <input type="checkbox" /> PAN Card (Apply / Correction / Download)
+                </label>
+                <a href="https://www.incometax.gov.in/iec/foportal" target="_blank" rel="noopener">incometax.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Link Aadhaar with PAN" data-ta="ஆதாரை பேனுடன் இணைக்கவும்">
+                  <input type="checkbox" /> Link Aadhaar with PAN
+                </label>
+                <a href="https://www.incometax.gov.in/iec/foportal" target="_blank" rel="noopener">incometax.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="DigiLocker (Govt document storage)" data-ta="டிஜிலாக்கர் (அரசு ஆவண சேமிப்பு)">
+                  <input type="checkbox" /> DigiLocker (Govt document storage)
+                </label>
+                <a href="https://digilocker.gov.in/" target="_blank" rel="noopener">digilocker.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Income, Tax & Finance" data-ta="வருமானம், வரி & நிதி">Income, Tax & Finance</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Income Tax e-Filing (ITR)" data-ta="வருமான வரி மின்னியல் தாக்கல் (ITR)">
+                  <input type="checkbox" /> Income Tax e-Filing (ITR)
+                </label>
+                <a href="https://www.incometax.gov.in/iec/foportal" target="_blank" rel="noopener">incometax.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="PF / Pension related services" data-ta="PF / பென்ஷன் தொடர்பான சேவைகள்">
+                  <input type="checkbox" /> PF / Pension related services
+                </label>
+                <a href="https://www.india.gov.in/" target="_blank" rel="noopener">india.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Jeevan Pramaan (Life Certificate – Pensioners)" data-ta="ஜீவன் பிரமான் (வாழ்க்கை சான்று – பென்ஷனர்கள்)">
+                  <input type="checkbox" /> Jeevan Pramaan (Life Certificate – Pensioners)
+                </label>
+                <a href="https://jeevanpramaan.gov.in/" target="_blank" rel="noopener">jeevanpramaan.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Transport" data-ta="போக்குவரத்து">Transport</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Driving Licence (Apply / Renew / Status)" data-ta="ஓட்டுநர் உரிமம் (விண்ணப்பம் / புதுப்பிப்பு / நிலை)">
+                  <input type="checkbox" /> Driving Licence (Apply / Renew / Status)
+                </label>
+                <a href="https://parivahan.gov.in/" target="_blank" rel="noopener">parivahan.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Vehicle Registration (RC, Transfer, Status)" data-ta="வாகன பதிவு (RC, மாற்றம், நிலை)">
+                  <input type="checkbox" /> Vehicle Registration (RC, Transfer, Status)
+                </label>
+                <a href="https://parivahan.gov.in/" target="_blank" rel="noopener">parivahan.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Health & Insurance" data-ta="ஆரோக்கியம் & காப்பீடு">Health & Insurance</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="e-Sanjeevani (Tele-medicine)" data-ta="e-சஞ்சீவனி (தொலை மருத்துவம்)">
+                  <input type="checkbox" /> e-Sanjeevani (Tele-medicine)
+                </label>
+                <a href="https://www.india.gov.in/" target="_blank" rel="noopener">india.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Ayushman Bharat / Health Schemes" data-ta="ஆயுஷ்மான் பாரத் / ஆரோக்கிய திட்டங்கள்">
+                  <input type="checkbox" /> Ayushman Bharat / Health Schemes
+                </label>
+                <a href="https://www.india.gov.in/" target="_blank" rel="noopener">india.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="All-in-One App" data-ta="அனைத்தும் ஒரே இடத்தில் செயலி">All-in-One App</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="UMANG App (Aadhaar, PAN, Bills, Certificates, TN services)" data-ta="உமாங் செயலி (ஆதார், பேன், பில்கள், சான்றுகள், TN சேவைகள்)">
+                  <input type="checkbox" /> UMANG App (Aadhaar, PAN, Bills, Certificates, TN services)
+                </label>
+                <a href="https://umang.gov.in/" target="_blank" rel="noopener">umang.gov.in</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="gov-panel-tn" data-gov-panel="tn" role="tabpanel" aria-labelledby="gov-tab-tn" hidden>
+        <h2 id="tn-title" class="bilingual" data-en="Tamil Nadu State Government" data-ta="தமிழ்நாடு மாநில அரசு">Tamil Nadu State Government</h2>
+        <div class="grid-two">
+          <div class="card">
+            <h3 class="category bilingual" data-en="Main TN Portals" data-ta="முக்கிய TN இணையதளங்கள்">Main TN Portals</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Tamil Nadu Government Official Site" data-ta="தமிழ்நாடு அரசு அதிகாரப்பூர்வ இணையதளம்">
+                  <input type="checkbox" /> Tamil Nadu Government Official Site
+                </label>
+                <a href="https://www.tn.gov.in/" target="_blank" rel="noopener">tn.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="TN e-Sevai (All Citizen Services)" data-ta="TN e-சேவை (அனைத்து குடிமக்கள் சேவைகள்)">
+                  <input type="checkbox" /> TN e-Sevai (All Citizen Services)
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Certificates (via e-Sevai)" data-ta="சான்றிதழ்கள் (e-சேவை வழியாக)">Certificates (via e-Sevai)</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Income Certificate" data-ta="வருமானச் சான்றிதழ்">
+                  <input type="checkbox" /> Income Certificate
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Community / Caste Certificate" data-ta="சமூகம் / ஜாதி சான்றிதழ்">
+                  <input type="checkbox" /> Community / Caste Certificate
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Nativity / Residence Certificate" data-ta="பூர்வீகம் / வசிப்பிடம் சான்றிதழ்">
+                  <input type="checkbox" /> Nativity / Residence Certificate
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Birth Certificate" data-ta="பிறப்பு சான்றிதழ்">
+                  <input type="checkbox" /> Birth Certificate
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Death Certificate" data-ta="இறப்பு சான்றிதழ்">
+                  <input type="checkbox" /> Death Certificate
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Food & Ration" data-ta="உணவு & ரேஷன்">Food & Ration</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Ration Card (Apply / Add Member / Status)" data-ta="ரேஷன் கார்டு (விண்ணப்பம் / உறுப்பினர் சேர்க்கை / நிலை)">
+                  <input type="checkbox" /> Ration Card (Apply / Add Member / Status)
+                </label>
+                <a href="https://tnpds.gov.in/" target="_blank" rel="noopener">tnpds.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Smart Card Services" data-ta="ஸ்மார்ட் கார்டு சேவைகள்">
+                  <input type="checkbox" /> Smart Card Services
+                </label>
+                <a href="https://tnpds.gov.in/" target="_blank" rel="noopener">tnpds.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Pension & Social Welfare" data-ta="பென்ஷன் & சமூக நலன்">Pension & Social Welfare</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Old Age Pension" data-ta="முதியோர் பென்ஷன்">
+                  <input type="checkbox" /> Old Age Pension
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Widow Pension" data-ta="விதவை பென்ஷன்">
+                  <input type="checkbox" /> Widow Pension
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Unmarried Women Pension" data-ta="திருமணம் ஆகாத பெண்கள் பென்ஷன்">
+                  <input type="checkbox" /> Unmarried Women Pension
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Disability Pension" data-ta="மாற்றுத் திறனாளி பென்ஷன்">
+                  <input type="checkbox" /> Disability Pension
+                </label>
+                <a href="https://www.tnesevai.tn.gov.in/" target="_blank" rel="noopener">tnesevai.tn.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Women & Child Welfare Schemes" data-ta="பெண்கள் & குழந்தைகள் நலத் திட்டங்கள்">Women & Child Welfare Schemes</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Women Welfare Schemes (TN)" data-ta="பெண்கள் நலத் திட்டங்கள் (TN)">
+                  <input type="checkbox" /> Women Welfare Schemes (TN)
+                </label>
+                <a href="https://www.tn.gov.in/schemes.php" target="_blank" rel="noopener">tn.gov.in/schemes.php</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Girl Child Protection / Maternity schemes" data-ta="பெண் குழந்தை பாதுகாப்பு / மகப்பேறு திட்டங்கள்">
+                  <input type="checkbox" /> Girl Child Protection / Maternity schemes
+                </label>
+                <a href="https://www.tn.gov.in/schemes.php" target="_blank" rel="noopener">tn.gov.in/schemes.php</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Utilities" data-ta="மின் & நகராட்சி சேவைகள்">Utilities</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Electricity Services (TNEB – via UMANG / TN portals)" data-ta="மின்சாரம் சேவைகள் (TNEB – UMANG / TN portals மூலம்)">
+                  <input type="checkbox" /> Electricity Services (TNEB – via UMANG / TN portals)
+                </label>
+                <a href="https://umang.gov.in/" target="_blank" rel="noopener">umang.gov.in</a>
+              </div>
+              <div class="item">
+                <label class="bilingual" data-en="Water & Local Body Services" data-ta="தண்ணீர் & உள்ளாட்சிச் சேவைகள்">
+                  <input type="checkbox" /> Water & Local Body Services
+                </label>
+                <a href="https://www.tn.gov.in/" target="_blank" rel="noopener">tn.gov.in</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="category bilingual" data-en="Scheme Finder" data-ta="திட்ட தேடல்">Scheme Finder</h3>
+            <div class="checklist">
+              <div class="item">
+                <label class="bilingual" data-en="Find all Central + TN Schemes (Eligibility based)" data-ta="மத்திய + TN திட்டங்கள் (தகுதி அடிப்படையில்) தேடுங்கள்">
+                  <input type="checkbox" /> Find all Central + TN Schemes (Eligibility based)
+                </label>
+                <a href="https://www.myscheme.gov.in/search/state/Tamil%20Nadu" target="_blank" rel="noopener">myscheme.gov.in</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="howto-title">
+        <h2 id="howto-title" class="bilingual" data-en="How to use this checklist" data-ta="இந்த பட்டியலை பயன்படுத்தும் விதம்">How to use this checklist</h2>
+        <ol>
+          <li class="bilingual" data-en="Open the service link." data-ta="சேவை இணைப்பை திறக்கவும்.">Open the service link.</li>
+          <li class="bilingual" data-en="Apply or check status." data-ta="விண்ணப்பிக்கவும் அல்லது நிலை பார்க்கவும்.">Apply or check status.</li>
+          <li class="bilingual" data-en="Save receipt in DigiLocker." data-ta="ரசீதை டிஜிலாக்கரில் சேமிக்கவும்.">Save receipt in DigiLocker.</li>
+          <li class="bilingual" data-en="Tick the box and move to the next service." data-ta="பெட்டியை குறிக்கவும், அடுத்த சேவைக்கு செல்லவும்.">Tick the box and move to the next service.</li>
+        </ol>
+      </section>
+    </main>
+
+    <aside class="panel liquid side-rail" aria-label="Service notes">
+      <div class="rail-head">
+        <div>
+          <p class="rail-kicker">Service Notes</p>
+          <h3 class="rail-title">Voice Dashboard</h3>
+        </div>
+        <span class="pill-badge">Live</span>
+      </div>
+
+      <div class="rail-card">
+        <h4>Session Overview</h4>
+        <p class="rail-meta">Language-aware voice assistant with service auto-routing.</p>
+      </div>
+
+      <div class="rail-card">
+        <div class="progress-row">
+          <h4>Readiness</h4>
+          <strong>64%</strong>
+        </div>
+        <div class="bar" aria-hidden="true"><span></span></div>
+      </div>
+
+      <div class="rail-card">
+        <h4>Active Scope</h4>
+        <ul class="dot-list">
+          <li><span class="dot c1"></span>Central Government Services</li>
+          <li><span class="dot c2"></span>Tamil Nadu State Services</li>
+          <li><span class="dot c3"></span>Quick Voice Shortcuts</li>
+        </ul>
+      </div>
+
+      <div class="rail-card">
+        <h4>Tip</h4>
+        <p class="rail-meta">Say service names naturally. The assistant auto-matches related portals.</p>
+      </div>
+    </aside>
+    </div>
+
+    <footer>
+      <span class="bilingual" data-en="Web Speech API works best in Chrome or Edge on desktop. Microphone access is required." data-ta="Web Speech API Chrome அல்லது Edge இல் சிறப்பாக செயல்படும். மைக்ரோஃபோன் அனுமதி தேவை.">
+        Web Speech API works best in Chrome or Edge on desktop. Microphone access is required.
+      </span>
+    </footer>
+
+    <script>
+      const languageSelect = document.getElementById("languageSelect");
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const speakBtn = document.getElementById("speakBtn");
+      const micBtn = document.getElementById("micBtn");
+      const statusText = document.getElementById("statusText");
+      const transcriptBox = document.getElementById("transcript");
+      const responseBox = document.getElementById("response");
+      const debugBox = document.getElementById("debugBox");
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      let recognition;
+      let listening = false;
+      let lastMatchInfo = null;
+
+      const responses = {
+        pension: {
+          en: "For old age pension, you need Aadhaar, age proof, and bank details.",
+          ta: "மூத்தோர் உதவித் தொகைக்கு ஆதார், வயது சான்று, வங்கி விவரங்கள் தேவை.",
+        },
+        health: {
+          en: "I can help you find nearby health centers and scheme details.",
+          ta: "அருகிலுள்ள மருத்துவ மையங்கள் மற்றும் திட்ட விவரங்களை சொல்லுகிறேன்.",
+        },
+        ration: {
+          en: "Ration card updates can be done at the local e-Seva center.",
+          ta: "ரேஷன் கார்டு மாற்றங்களை அருகிலுள்ள இ-சேவை மையத்தில் செய்யலாம்.",
+        },
+        crop: {
+          en: "Crop insurance status can be checked with your policy number.",
+          ta: "உங்கள் பாலிசி எண்ணை வைத்து பயிர் காப்பீட்டு நிலையை காணலாம்.",
+        },
+        default: {
+          en: "I heard you. Please say pension, health, ration, or crop insurance.",
+          ta: "நான் கேட்டேன். பென்ஷன், மருத்துவம், ரேஷன் அல்லது பயிர் காப்பீடு என்று சொல்லுங்கள்.",
+        }
+      };
+
+      function pickLanguageCode() {
+        return languageSelect.value;
+      }
+
+      const serviceLinks = [
+        {
+          id: "aadhaar",
+          urls: {
+            en: "https://uidai.gov.in/en/",
+            ta: "https://uidai.gov.in/ta/"
+          },
+          keywords: [
+            "aadhaar", "aadhar", "adhar", "uidai",
+            "ஆதார்", "aathar", "aathaar", "aadar"
+          ],
+          response: {
+            en: "Opening Aadhaar services. You can apply, update, or download your Aadhaar here.",
+            ta: "ஆதார் சேவையை திறக்கிறேன். இங்கே விண்ணப்பிக்கவும், புதுப்பிக்கவும், பதிவிறக்கவும்."
+          }
+        },
+        {
+          urls: {
+            en: "https://uidai.gov.in/en/my-aadhaar/",
+            ta: "https://uidai.gov.in/ta/my-aadhaar-ta/"
+          },
+          keywords: [
+            "aadhaar services", "aadhaar service", "my aadhaar",
+            "ஆதார் சேவைகள்", "aathar service"
+          ],
+          response: {
+            en: "Opening Aadhaar services page.",
+            ta: "ஆதார் சேவைகள் பக்கத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://uidai.gov.in/en/my-aadhaar/update-your-aadhaar.html",
+            ta: "https://uidai.gov.in/ta/my-aadhaar-ta/update-your-aadhaar-ta.html"
+          },
+          keywords: [
+            "aadhaar update", "update aadhaar", "aadhaar correction",
+            "ஆதார் புதுப்பிப்பு", "aadhaar update status"
+          ],
+          response: {
+            en: "Opening Aadhaar update page.",
+            ta: "ஆதார் புதுப்பிப்பு பக்கத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://serviceonline.gov.in/uidai/"
+          },
+          keywords: [
+            "aadhaar status", "aadhaar status check",
+            "ஆதார் நிலை", "aathar status"
+          ],
+          response: {
+            en: "Opening Aadhaar status page.",
+            ta: "ஆதார் நிலை பக்கத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          id: "income_tax",
+          urls: {
+            en: "https://www.incometax.gov.in/iec/foportal"
+          },
+          keywords: [
+            "income tax", "itr", "e-filing", "income tax filing", "itr filing",
+            "வருமான வரி", "itr தாக்கல்", "e filing"
+          ],
+          response: {
+            en: "Opening Income Tax e-filing portal for ITR submission.",
+            ta: "ITR தாக்கல் செய்ய வருமான வரி e-filing தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          id: "pan",
+          urls: {
+            en: "https://www.incometax.gov.in/iec/foportal"
+          },
+          keywords: [
+            "pan", "pan card", "pancard", "pan correction", "pan update",
+            "பேன்", "பேன் கார்டு"
+          ],
+          response: {
+            en: "Opening PAN services on the Income Tax portal.",
+            ta: "பேன் கார்டு சேவைகளுக்கான வருமான வரி தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://digilocker.gov.in/"
+          },
+          keywords: ["digilocker", "digi locker", "digit locker", "டிஜிலாக்கர்", "டிஜி லாக்கர்"],
+          response: {
+            en: "Opening DigiLocker for government document storage.",
+            ta: "அரசு ஆவணங்களை சேமிக்க டிஜிலாக்கரை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://jeevanpramaan.gov.in/"
+          },
+          keywords: [
+            "jeevan pramaan", "jeevan praman", "life certificate",
+            "ஜீவன் பிரமான்", "வாழ்க்கை சான்று", "vaazhkkai saanru"
+          ],
+          response: {
+            en: "Opening Jeevan Pramaan for pension life certificate.",
+            ta: "பென்ஷன் வாழ்க்கைச் சான்றிற்கான ஜீவன் பிரமான் தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://parivahan.gov.in/"
+          },
+          keywords: [
+            "driving licence", "driving license", "dl", "vehicle registration", "rc", "parivahan",
+            "ஓட்டுநர் உரிமம்", "வாகன பதிவு", "ottunar urimai", "vagana padhivu"
+          ],
+          response: {
+            en: "Opening Parivahan for driving licence and vehicle registration services.",
+            ta: "ஓட்டுநர் உரிமம் மற்றும் வாகன பதிவு சேவைகளுக்கான பரிவாஹன் தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://umang.gov.in/"
+          },
+          keywords: [
+            "umang", "u mang", "உமாங்", "umang app",
+            "electricity", "current", "minsaram", "minsaara", "மின்சாரம்"
+          ],
+          response: {
+            en: "Opening UMANG for electricity and other citizen services.",
+            ta: "மின்சாரம் மற்றும் பிற குடிமக்கள் சேவைகளுக்கான உமாங் தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tn.gov.in/",
+            ta: "https://www.tn.gov.in/"
+          },
+          keywords: [
+            "tamil nadu government", "tn government", "tamilnadu government",
+            "தமிழ்நாடு அரசு", "tn portal", "tamilnadu portal"
+          ],
+          response: {
+            en: "Opening Tamil Nadu Government official portal.",
+            ta: "தமிழ்நாடு அரசு அதிகாரப்பூர்வ தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: [
+            "tn e-sevai", "tn eseva", "e-sevai", "e sevai", "esevai", "eseva",
+            "இ-சேவை", "e-sevai", "e service", "csc", "esevai portal"
+          ],
+          response: {
+            en: "Opening TN e-Sevai for citizen services and certificates.",
+            ta: "குடிமக்கள் சேவைகள் மற்றும் சான்றிதழ்களுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["income certificate", "income cert", "வருமான சான்று", "வருமானச் சான்றிதழ்"],
+          response: {
+            en: "Opening TN e-Sevai for income certificate.",
+            ta: "வருமானச் சான்றிதழுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["community certificate", "caste certificate", "ஜாதி சான்றிதழ்", "சமூகம் சான்றிதழ்"],
+          response: {
+            en: "Opening TN e-Sevai for community or caste certificate.",
+            ta: "சமூகம்/ஜாதி சான்றிதழுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["nativity certificate", "residence certificate", "பூர்வீகம் சான்றிதழ்", "வசிப்பிடம் சான்றிதழ்"],
+          response: {
+            en: "Opening TN e-Sevai for nativity or residence certificate.",
+            ta: "பூர்வீகம்/வசிப்பிடம் சான்றிதழுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["birth certificate", "பிறப்பு சான்றிதழ்"],
+          response: {
+            en: "Opening TN e-Sevai for birth certificate.",
+            ta: "பிறப்பு சான்றிதழுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["death certificate", "இறப்பு சான்றிதழ்"],
+          response: {
+            en: "Opening TN e-Sevai for death certificate.",
+            ta: "இறப்பு சான்றிதழுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          id: "pension_state",
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["old age pension", "senior pension", "முதியோர் பென்ஷன்"],
+          response: {
+            en: "Opening TN e-Sevai for old age pension.",
+            ta: "முதியோர் பென்ஷனுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["widow pension", "விதவை பென்ஷன்"],
+          response: {
+            en: "Opening TN e-Sevai for widow pension.",
+            ta: "விதவை பென்ஷனுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["unmarried women pension", "single women pension", "திருமணம் ஆகாத பெண்கள் பென்ஷன்"],
+          response: {
+            en: "Opening TN e-Sevai for unmarried women pension.",
+            ta: "திருமணம் ஆகாத பெண்கள் பென்ஷனுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tnesevai.tn.gov.in/",
+            ta: "https://www.tnesevai.tn.gov.in/"
+          },
+          keywords: ["disability pension", "disabled pension", "மாற்றுத் திறனாளி பென்ஷன்"],
+          response: {
+            en: "Opening TN e-Sevai for disability pension.",
+            ta: "மாற்றுத் திறனாளி பென்ஷனுக்கான TN e-சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://tnpds.gov.in/",
+            ta: "https://tnpds.gov.in/"
+          },
+          keywords: [
+            "ration", "ration card", "smart card", "pds", "tnpds",
+            "ரேஷன்", "ரேஷன் கார்டு", "ஸ்மார்ட் கார்டு",
+            "ration kaard", "ration card status"
+          ],
+          response: {
+            en: "Opening TN PDS for ration card and smart card services.",
+            ta: "ரேஷன் கார்டு மற்றும் ஸ்மார்ட் கார்டு சேவைகளுக்கான TN PDS தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tn.gov.in/schemes.php",
+            ta: "https://www.tn.gov.in/schemes.php"
+          },
+          keywords: ["women welfare schemes", "women schemes", "பெண்கள் நலத் திட்டங்கள்"],
+          response: {
+            en: "Opening Tamil Nadu women welfare schemes.",
+            ta: "தமிழ்நாடு பெண்கள் நலத் திட்டங்களை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tn.gov.in/schemes.php",
+            ta: "https://www.tn.gov.in/schemes.php"
+          },
+          keywords: ["girl child protection", "maternity schemes", "குழந்தை பாதுகாப்பு திட்டம்", "மகப்பேறு திட்டங்கள்"],
+          response: {
+            en: "Opening Tamil Nadu girl child protection and maternity schemes.",
+            ta: "தமிழ்நாடு பெண் குழந்தை பாதுகாப்பு மற்றும் மகப்பேறு திட்டங்களை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.tn.gov.in/",
+            ta: "https://www.tn.gov.in/"
+          },
+          keywords: ["water services", "local body services", "தண்ணீர் சேவைகள்", "உள்ளாட்சிச் சேவைகள்"],
+          response: {
+            en: "Opening Tamil Nadu government portal for water and local body services.",
+            ta: "தண்ணீர் மற்றும் உள்ளாட்சிச் சேவைகளுக்கான தமிழ்நாடு அரசு தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.india.gov.in/",
+            ta: "https://www.india.gov.in/"
+          },
+          keywords: ["pf services", "pension services", "pf pension", "pf related"],
+          response: {
+            en: "Opening India portal for PF and pension related services.",
+            ta: "PF மற்றும் பென்ஷன் தொடர்பான சேவைகளுக்கான India portal தளத்தை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.india.gov.in/",
+            ta: "https://www.india.gov.in/"
+          },
+          keywords: ["e-sanjeevani", "telemedicine", "tele medicine", "தொலை மருத்துவம்"],
+          response: {
+            en: "Opening e-Sanjeevani tele-medicine services.",
+            ta: "e-சஞ்சீவனி தொலை மருத்துவ சேவையை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.india.gov.in/",
+            ta: "https://www.india.gov.in/"
+          },
+          keywords: ["ayushman bharat", "health scheme", "health schemes", "ஆரோக்கிய திட்டம்", "ஆயுஷ்மான் பாரத்"],
+          response: {
+            en: "Opening Ayushman Bharat and health schemes.",
+            ta: "ஆயுஷ்மான் பாரத் மற்றும் ஆரோக்கிய திட்டங்களை திறக்கிறேன்."
+          }
+        },
+        {
+          urls: {
+            en: "https://www.myscheme.gov.in/search/state/Tamil%20Nadu"
+          },
+          keywords: [
+            "scheme finder", "my scheme", "myscheme", "scheme search",
+            "திட்ட தேடல்", "திட்டம் தேடு", "thittam thedal"
+          ],
+          response: {
+            en: "Opening scheme finder for Central and Tamil Nadu schemes.",
+            ta: "மத்திய மற்றும் தமிழ்நாடு திட்டங்களை தேடும் தளத்தை திறக்கிறேன்."
+          }
+        }
+      ];
+
+      function normalizeText(text) {
+        return text
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s]/gu, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function levenshtein(a, b) {
+        if (a === b) return 0;
+        if (!a.length) return b.length;
+        if (!b.length) return a.length;
+        const matrix = Array.from({ length: a.length + 1 }, () => []);
+        for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+        for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= a.length; i++) {
+          for (let j = 1; j <= b.length; j++) {
+            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+            matrix[i][j] = Math.min(
+              matrix[i - 1][j] + 1,
+              matrix[i][j - 1] + 1,
+              matrix[i - 1][j - 1] + cost
+            );
+          }
+        }
+        return matrix[a.length][b.length];
+      }
+
+      function isFuzzyMatch(text, keyword) {
+        if (!text || !keyword) return false;
+        if (text.includes(keyword)) return true;
+        if (keyword.length < 4) return false;
+        const distance = levenshtein(text, keyword);
+        const threshold = Math.max(1, Math.floor(keyword.length * 0.34));
+        return distance <= threshold;
+      }
+
+      function findService(text) {
+        const normalizedText = normalizeText(text);
+        if (!normalizedText) return null;
+        const pensionExact = ["pension", "பென்ஷன்", "பென்சன்"];
+        if (pensionExact.some((token) => normalizedText.includes(normalizeText(token)))) {
+          const forced = serviceLinks.find((service) => service.id === "pension_state");
+          if (forced) return forced;
+        }
+        const textWords = normalizedText.split(" ").filter((word) => word.length >= 3);
+        let bestMatch = null;
+        let bestScore = 0;
+        let bestKeyword = "";
+        const minScore = 55;
+        const hasWord = (word) => textWords.includes(word);
+        const hasPan =
+          hasWord("pan") ||
+          hasWord("pancard") ||
+          normalizedText.includes("pan card");
+        const pensionTokens = [
+          "pension",
+          "பென்ஷன்",
+          "பென்சன்",
+          "பென்சன"
+        ];
+        const hasPension = pensionTokens.some((token) => normalizedText.includes(token));
+
+        const forceRules = [
+          {
+            test: () => hasPension,
+            id: "pension_state"
+          },
+          {
+            test: (t) => t.includes("income tax") || t.includes("itr") || t.includes("income"),
+            id: "income_tax"
+          },
+          {
+            test: () => hasPan,
+            id: "pan"
+          },
+          {
+            test: (t) => t.includes("aadhaar") || t.includes("aadhar") || t.includes("adhar") || t.includes("ஆதார்"),
+            id: "aadhaar"
+          }
+        ];
+
+        for (const rule of forceRules) {
+          if (rule.test(normalizedText)) {
+            const forced = serviceLinks.find((service) => service.id === rule.id);
+            if (forced) return forced;
+          }
+        }
+
+        for (const service of serviceLinks) {
+          for (const kw of service.keywords) {
+            const normalizedKeyword = normalizeText(kw);
+            if (!normalizedKeyword) continue;
+            const keywordWords = normalizedKeyword.split(" ").filter((word) => word.length >= 3);
+            let score = 0;
+
+            if (normalizedText.includes(normalizedKeyword)) {
+              score = 120 + normalizedKeyword.length;
+            } else if (textWords.some((word) => word === normalizedKeyword)) {
+              score = 90 + normalizedKeyword.length;
+            } else if (textWords.some((word) => isFuzzyMatch(word, normalizedKeyword))) {
+              score = 70 + normalizedKeyword.length;
+            } else if (keywordWords.length > 1) {
+              const partialHits = keywordWords.filter((kwWord) =>
+                textWords.some((word) => isFuzzyMatch(word, kwWord))
+              ).length;
+              if (partialHits >= 1) {
+                score = 45 + partialHits * 10 + normalizedKeyword.length;
+              }
+            }
+
+            if (score > bestScore) {
+              bestScore = score;
+              bestMatch = service;
+              bestKeyword = normalizedKeyword;
+            }
+          }
+        }
+        lastMatchInfo = bestScore >= minScore
+          ? { id: bestMatch?.id || "unknown", keyword: bestKeyword, score: bestScore }
+          : null;
+        return bestScore >= minScore ? bestMatch : null;
+      }
+
+      function getServiceUrl(service) {
+        if (!service) return null;
+        if (service.urls) {
+          const useTamil = pickLanguageCode().startsWith("ta");
+          if (useTamil) {
+            return service.urls.ta || service.urls.en || null;
+          }
+          return service.urls.en || service.urls.ta || null;
+        }
+        return service.url || null;
+      }
+
+      function getResponseText(text) {
+        const lower = text.toLowerCase();
+        const lang = pickLanguageCode();
+        const isTamil = lang.startsWith("ta");
+        const key = isTamil ? "ta" : "en";
+
+        const matched = findService(text);
+        if (matched && matched.response) {
+          return matched.response[key];
+        }
+        if (lower.includes("pension") || lower.includes("பென்ஷன்")) {
+          return responses.pension[key];
+        }
+        if (lower.includes("health") || lower.includes("மருத்து")) {
+          return responses.health[key];
+        }
+        if (lower.includes("ration") || lower.includes("ரேஷன்")) {
+          return responses.ration[key];
+        }
+        if (lower.includes("crop") || lower.includes("பயிர்")) {
+          return responses.crop[key];
+        }
+        return responses.default[key];
+      }
+
+      function updateStatus(message, isListening = false) {
+        statusText.textContent = message;
+        statusText.dataset.en = message;
+        statusText.dataset.ta = message;
+        micBtn.classList.toggle("listening", isListening);
+        micBtn.setAttribute("aria-pressed", String(isListening));
+      }
+
+      function speak(text) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = pickLanguageCode();
+        const voices = window.speechSynthesis.getVoices();
+        const matched = voices.find((voice) => voice.lang === utterance.lang);
+        if (matched) {
+          utterance.voice = matched;
+        }
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function initRecognition() {
+        if (!SpeechRecognition) {
+          updateStatus("Speech recognition is not supported in this browser.");
+          startBtn.disabled = true;
+          micBtn.disabled = true;
+          return;
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+          listening = true;
+          updateStatus("Listening...", true);
+        };
+
+        recognition.onend = () => {
+          listening = false;
+          updateStatus("Ready to listen.");
+        };
+
+        recognition.onerror = (event) => {
+          updateStatus(`Error: ${event.error}`);
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          transcriptBox.textContent = transcript;
+          const responseText = getResponseText(transcript);
+          responseBox.textContent = responseText;
+          speak(responseText);
+          const matchedService = findService(transcript);
+          const serviceUrl = getServiceUrl(matchedService);
+          if (matchedService) {
+            const showUrl = serviceUrl || "no url";
+            const showKeyword = lastMatchInfo?.keyword || "n/a";
+            const showScore = lastMatchInfo?.score ?? "n/a";
+            debugBox.textContent = `Debug: matched="${showKeyword}", score=${showScore}, url=${showUrl}`;
+          } else {
+            debugBox.textContent = "Debug: no service match.";
+          }
+          if (serviceUrl) {
+            // Popups from speech callbacks are often blocked; fall back to same-tab navigation.
+            const opened = window.open(serviceUrl, "_blank", "noopener");
+            if (!opened) {
+              window.location.assign(serviceUrl);
+            }
+          }
+        };
+      }
+
+      function startListening() {
+        if (!recognition || listening) return;
+        recognition.lang = pickLanguageCode();
+        recognition.start();
+      }
+
+      function stopListening() {
+        if (!recognition || !listening) return;
+        recognition.stop();
+      }
+
+      function applyLanguageUI() {
+        const lang = pickLanguageCode();
+        const useTamil = lang.startsWith("ta");
+        document.querySelectorAll(".bilingual").forEach((el) => {
+          const text = useTamil ? el.dataset.ta : el.dataset.en;
+          if (!text) return;
+          if (el.tagName === "LABEL" && el.querySelector("input")) {
+            let span = el.querySelector(".bilingual-text");
+            if (!span) {
+              span = document.createElement("span");
+              span.className = "bilingual-text";
+              const nodes = Array.from(el.childNodes).filter((node) => node.nodeType === Node.TEXT_NODE);
+              nodes.forEach((node) => span.appendChild(node));
+              el.appendChild(span);
+            }
+            span.textContent = text;
+            return;
+          }
+          el.textContent = text;
+        });
+      }
+
+      function initGovernmentTabs() {
+        const tabButtons = Array.from(document.querySelectorAll(".gov-tab-btn"));
+        const panels = Array.from(document.querySelectorAll("[data-gov-panel]"));
+        if (tabButtons.length !== 2 || panels.length !== 2) return;
+
+        const activateGovernmentTab = (targetPanel) => {
+          tabButtons.forEach((btn) => {
+            const isActive = btn.getAttribute("aria-controls") === targetPanel;
+            btn.classList.toggle("active", isActive);
+            btn.setAttribute("aria-selected", String(isActive));
+            btn.setAttribute("tabindex", isActive ? "0" : "-1");
+          });
+          panels.forEach((panel) => {
+            panel.hidden = panel.id !== targetPanel;
+          });
+        };
+
+        tabButtons.forEach((btn, index) => {
+          btn.addEventListener("click", () => {
+            activateGovernmentTab(btn.getAttribute("aria-controls"));
+          });
+
+          btn.addEventListener("keydown", (event) => {
+            const lastIndex = tabButtons.length - 1;
+            let targetIndex = null;
+            if (event.key === "ArrowRight") targetIndex = index === lastIndex ? 0 : index + 1;
+            if (event.key === "ArrowLeft") targetIndex = index === 0 ? lastIndex : index - 1;
+            if (event.key === "Home") targetIndex = 0;
+            if (event.key === "End") targetIndex = lastIndex;
+            if (targetIndex === null) return;
+            event.preventDefault();
+            const nextButton = tabButtons[targetIndex];
+            activateGovernmentTab(nextButton.getAttribute("aria-controls"));
+            nextButton.focus();
+          });
+        });
+
+        activateGovernmentTab("gov-panel-central");
+      }
+
+      function initCategoryTabs() {
+        const sections = document.querySelectorAll("section.panel");
+        sections.forEach((section, sectionIndex) => {
+          const grid = section.querySelector(".grid-two");
+          if (!grid) return;
+
+          const cards = Array.from(grid.children).filter((card) =>
+            card.classList.contains("card") && card.querySelector(".category")
+          );
+          if (cards.length <= 1) return;
+
+          grid.classList.add("tabbed-grid");
+          const tabList = document.createElement("div");
+          tabList.className = "category-tabs";
+          tabList.setAttribute("role", "tablist");
+
+          const heading = section.querySelector("h2");
+          if (heading) {
+            tabList.setAttribute("aria-label", heading.textContent.trim());
+          }
+
+          const tabButtons = [];
+          const activateTab = (activeIndex) => {
+            tabButtons.forEach((btn, index) => {
+              const isActive = index === activeIndex;
+              btn.classList.toggle("active", isActive);
+              btn.setAttribute("aria-selected", String(isActive));
+              btn.setAttribute("tabindex", isActive ? "0" : "-1");
+            });
+            cards.forEach((card, index) => {
+              const isActive = index === activeIndex;
+              card.classList.toggle("active", isActive);
+              card.hidden = !isActive;
+            });
+          };
+
+          cards.forEach((card, cardIndex) => {
+            const categoryHeading = card.querySelector(".category");
+            const panelId = `category-panel-${sectionIndex}-${cardIndex}`;
+            const tabId = `category-tab-${sectionIndex}-${cardIndex}`;
+            const enText = categoryHeading?.dataset.en || categoryHeading?.textContent?.trim() || `Category ${cardIndex + 1}`;
+            const taText = categoryHeading?.dataset.ta || enText;
+
+            card.id = panelId;
+            card.setAttribute("role", "tabpanel");
+            card.setAttribute("aria-labelledby", tabId);
+            card.hidden = true;
+
+            const tabButton = document.createElement("button");
+            tabButton.type = "button";
+            tabButton.id = tabId;
+            tabButton.className = "tab-btn bilingual";
+            tabButton.dataset.en = enText;
+            tabButton.dataset.ta = taText;
+            tabButton.setAttribute("role", "tab");
+            tabButton.setAttribute("aria-controls", panelId);
+            tabButton.setAttribute("aria-selected", "false");
+            tabButton.setAttribute("tabindex", "-1");
+            tabButton.textContent = enText;
+
+            tabButton.addEventListener("click", () => {
+              activateTab(cardIndex);
+            });
+
+            tabButton.addEventListener("keydown", (event) => {
+              const lastIndex = tabButtons.length - 1;
+              let targetIndex = null;
+              if (event.key === "ArrowRight") targetIndex = cardIndex === lastIndex ? 0 : cardIndex + 1;
+              if (event.key === "ArrowLeft") targetIndex = cardIndex === 0 ? lastIndex : cardIndex - 1;
+              if (event.key === "Home") targetIndex = 0;
+              if (event.key === "End") targetIndex = lastIndex;
+              if (targetIndex === null) return;
+              event.preventDefault();
+              activateTab(targetIndex);
+              tabButtons[targetIndex].focus();
+            });
+
+            tabButtons.push(tabButton);
+            tabList.appendChild(tabButton);
+          });
+
+          section.insertBefore(tabList, grid);
+          activateTab(0);
+        });
+      }
+
+      function initQuickCards() {
+        document.querySelectorAll(".mini-card").forEach((card) => {
+          const url = card.dataset.url;
+          if (!url) return;
+          card.addEventListener("click", () => {
+            window.open(url, "_blank", "noopener");
+          });
+          card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              window.open(url, "_blank", "noopener");
+            }
+          });
+        });
+      }
+
+      languageSelect.addEventListener("change", applyLanguageUI);
+      startBtn.addEventListener("click", startListening);
+      stopBtn.addEventListener("click", stopListening);
+      micBtn.addEventListener("click", () => {
+        if (listening) {
+          stopListening();
+        } else {
+          startListening();
+        }
+      });
+      speakBtn.addEventListener("click", () => {
+        const text = responseBox.textContent.trim();
+        if (text) speak(text);
+      });
+
+      initGovernmentTabs();
+      initCategoryTabs();
+      applyLanguageUI();
+      initQuickCards();
+      initRecognition();
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
